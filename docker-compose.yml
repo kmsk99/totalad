@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  # totalad-database:
+  #   image: postgres:14.2-alpine
+  #   restart: unless-stopped
+  #   container_name: totalad-database
+  #   environment:
+  #     CHOKIDAR_USEPOLLING: "true"
+  #     POSTGRES_USER: "${DB_USERNAME}"
+  #     POSTGRES_PASSWORD: "${DB_PASSWORD}"
+  #     POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "${DB_USERNAME}"]
+  #   volumes:
+  #     - ./totalad-database/data/:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+  backend:
+    build:
+      context: ./crawling-process
+      dockerfile: Dockerfile
+    # restart: unless-stopped
+    container_name: crawling-process
+    command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
+    ports:
+      - 5000:5000
+    volumes:
+      - ./crawling-process/app:/app/
+    tty: true
+# http://localhost:5000/
+# docker compose up -d
+# docker compose down
+# docker compose up --build
+# docker compose -f docker-compose.dev.yml up --build
+# docker-compose up --force-recreate --build -d
